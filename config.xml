@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<control  xmlns="http://www.askia.com/2.1.0/ADCSchema"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.askia.com/2.1.0/ADCSchema https://raw.githubusercontent.com/AskiaADX/ADXSchema/2.1.0/ADCSchema.xsd"
+          version="2.1.0"
+          askiaCompat="5.4.2">
+  <info>
+    <name>Sketchpad</name>
+    <guid>2e41835a-bff0-4a7f-8011-e8fee5cd3317</guid>
+    <version>1.0.0</version>
+    <date>2018-07-20</date>
+    <description><![CDATA[]]></description>
+    <company>Askia</company>
+    <author><![CDATA[Quentin Legrand <quentin@askia.com>]]></author>
+    <site>http://www.askia.com</site>
+    <helpURL></helpURL>
+    <categories>
+      <category>General</category>
+    </categories>
+    <constraints>
+      <constraint on="questions" chapter="false" single="false" multiple="false" numeric="false" date="false" open="true" requireParentLoop="false" />
+      <constraint on="controls" responseblock="true" label="false" textbox="false" checkbox="false" listbox="false" radiobutton="false" />
+      <constraint on="responses" max="*" min="*" />
+    </constraints>
+  </info>
+  <outputs defaultOutput="default">
+    <output id="default">
+      <description><![CDATA[Default output]]></description>
+      <condition><![CDATA[(Interview.IsFace=0) and Browser.Support("javascript")]]></condition>
+      <content fileName="default.html" type="html" mode="dynamic" position="placeholder" />
+      <content fileName="default.css" type="css" mode="dynamic" position="head" />
+      <content fileName="adc_sketchpad.js" type="javascript" mode="static" position="foot" />
+      <content fileName="overlay.css" type="css" mode="static" position="head" />
+      <content fileName="default.css" type="css" mode="dynamic" position="none" />
+      <content fileName="pickr.min.css" type="css" mode="static" position="head" />
+      <content fileName="pickr.min.js" type="javascript" mode="static" position="foot" />
+    </output>
+    <output id="fallback_face">
+      <description><![CDATA[Fallback for AskiaFace]]></description>
+      <condition><![CDATA[Interview.IsFace = 1]]></condition>
+      <content fileName="fallback_face.html" type="html" mode="dynamic" position="placeholder" />
+      <content fileName="adc_sketchpad_face.js" type="javascript" mode="static" position="foot" />
+      <content fileName="default.css" type="css" mode="dynamic" position="head" />
+    </output>
+  </outputs>
+  <properties>
+    <category id="AskiaUploadService" name="Askia Upload Service">
+      <property xsi:type="standardProperty" id="AusUrl" name="Url" type="string" mode="static" require="true" visible="true">
+        <description><![CDATA[AskiaUploaderService.svc url]]></description>
+        <value></value>
+      </property>
+      <property xsi:type="standardProperty" id="AusApiKey" name="API Key" type="string" mode="static" require="true" visible="true">
+        <description><![CDATA[Api key for AskiaUploadService]]></description>
+        <value></value>
+      </property>
+      <property xsi:type="standardProperty" id="AusSecretKey" name="Secret Key" type="string" mode="static" require="true" visible="true">
+        <description><![CDATA[Secret key for AskiaUploadService]]></description>
+        <value></value>
+      </property>
+      <property xsi:type="standardProperty" id="UploadButtonText" name="Upload Button Text" type="string" mode="static" require="true" visible="true">
+        <description><![CDATA[Upload Button Text]]></description>
+        <value><![CDATA[Upload]]></value>
+      </property>
+      <property xsi:type="standardProperty" id="AusProjectName" name="Project Name" type="string" require="false" visible="true">
+        <description><![CDATA[]]></description>
+        <value><![CDATA[AskiaProject]]></value>
+      </property>
+      <property xsi:type="standardProperty" id="AusMaxFileSize" name="Maximum file size (KB)" type="number" require="true" visible="true" min="1" max="102400">
+        <description><![CDATA[]]></description>
+        <value><![CDATA[2048]]></value>
+      </property>
+    </category>
+    <category id="error_messages" name="Error Messages">
+      <property xsi:type="standardProperty" id="file_size_exceed_error" name="File Size Exceed Error" type="string" mode="static" require="false" visible="true">
+        <description><![CDATA[]]></description>
+        <value><![CDATA[File Size Exceeded]]></value>
+      </property>
+      <property xsi:type="standardProperty" id="invalid_api_secret_error" name="Invalid Api or Secret key Error" type="string" mode="static" require="false" visible="true">
+        <description><![CDATA[]]></description>
+        <value><![CDATA[Invalid api key or secret key.]]></value>
+      </property>
+      <property xsi:type="standardProperty" id="error_occured_at_upload_error" name="Error occured at file upload. Please contact support" type="string" mode="static" require="false" visible="true">
+        <description><![CDATA[]]></description>
+        <value><![CDATA[Error occured at file upload]]></value>
+      </property>
+      <property xsi:type="standardProperty" id="error_empty_canvas" name="Empty canvas error" type="string" mode="static" require="false" visible="true">
+        <description><![CDATA[]]></description>
+        <value><![CDATA[Canvas is empty]]></value>
+      </property>
+      <property xsi:type="standardProperty" id="error_while_generating_token" name="Error while generating token" type="string" mode="static" require="false" visible="true">
+        <description><![CDATA[]]></description>
+        <value><![CDATA[Error while generating token]]></value>
+      </property>
+    </category>
+    <category id="SuccessMessage" name="Success message">
+      <property xsi:type="standardProperty" id="success_message_color" name="Success message color" type="color" mode="static" require="false" visible="true">
+        <description><![CDATA[]]></description>
+        <value><![CDATA[0,170,0]]></value>
+      </property>
+      <property xsi:type="standardProperty" id="success_message_upload" name="Success message on upload" type="string" mode="static" require="false" visible="true">
+        <description><![CDATA[]]></description>
+        <value><![CDATA[Upload successful]]></value>
+      </property>
+    </category>
+    <category id="Canvas" name="Canvas">
+      <property xsi:type="standardProperty" id="canvasWidth" name="Canva width" type="number" require="false" visible="true">
+        <description><![CDATA[in px]]></description>
+        <value><![CDATA[500]]></value>
+      </property>
+      <property xsi:type="standardProperty" id="canvasHeight" name="Canva height" type="number" require="false" visible="true">
+        <description><![CDATA[in px]]></description>
+        <value><![CDATA[500]]></value>
+      </property>
+      <property xsi:type="standardProperty" id="ClearButtonText" name="Clear button text" type="string" require="false" visible="true">
+        <description><![CDATA[]]></description>
+        <value><![CDATA[Clear]]></value>
+      </property>
+      <property xsi:type="standardProperty" id="canvasMessage" name="Canvas text" type="string" require="false" visible="true">
+        <description><![CDATA[]]></description>
+        <value><![CDATA[Please fill the canvas below]]></value>
+      </property>
+      <property xsi:type="standardProperty" id="canvasBorderWidth" name="Canvas border width" type="number" require="false" visible="true">
+        <description><![CDATA[in px]]></description>
+        <value><![CDATA[1]]></value>
+      </property>
+      <property xsi:type="standardProperty" id="canvasBorderColor" name="Canvas border color" type="color" require="false" visible="true" colorFormat="rgb">
+        <description><![CDATA[in rgb]]></description>
+        <value><![CDATA[204,204,204]]></value>
+      </property>
+      <property xsi:type="standardProperty" id="drawingColor" name="Drawing color" type="color" require="false" visible="true">
+        <description><![CDATA[in rgb]]></description>
+        <value><![CDATA[0,0,0]]></value>
+      </property>
+      <property xsi:type="standardProperty" id="drawingWidth" name="Drawing width" type="number" require="false" visible="true">
+        <description><![CDATA[]]></description>
+        <value><![CDATA[1]]></value>
+        <options>
+          <option value="1" text="Small" />
+          <option value="2" text="Medium" />
+          <option value="4" text="Large" />
+        </options>
+      </property>
+      <property xsi:type="standardProperty" id="enableCanvasBgColor" name="Enable Canvas background color" type="boolean" require="false" visible="true">
+        <description><![CDATA[]]></description>
+        <value><![CDATA[false]]></value>
+      </property>
+      <property xsi:type="standardProperty" id="canvasBgColor" name="Canvas background color" type="color" require="false" visible="true">
+        <description><![CDATA[in rgb]]></description>
+        <value><![CDATA[255,255,255]]></value>
+      </property>
+      <property xsi:type="standardProperty" id="displayRes" name="Display canvas result" type="boolean" require="false" visible="true">
+        <description><![CDATA[]]></description>
+        <value><![CDATA[false]]></value>
+      </property>
+      <property xsi:type="standardProperty" id="showToolbar" name="Show toolbar" type="boolean" require="false" visible="true">
+        <description><![CDATA[]]></description>
+        <value><![CDATA[false]]></value>
+      </property>
+    </category>
+  </properties>
+</control>

@@ -1,0 +1,151 @@
+{%
+Dim canvasWidth = CurrentADC.PropValue("canvasWidth")
+Dim canvasHeight = CurrentADC.PropValue("canvasHeight")
+
+Dim inputName  =  CurrentQuestion.InputName()
+
+Dim maxValue = CurrentQuestion.MaxValue
+Dim attrMax  = On(maxValue <> DK, "maxLength=\"" + maxValue + "\"", "")
+
+
+Dim attrRequired = On(CurrentQuestion.IsAllowDK, "required=\"required\"", "")
+
+Dim displayRes = (CurrentADC.PropValue("displayRes") = "1")
+Dim showToolbar = (CurrentADC.PropValue("showToolbar") = "1")
+
+Dim drawingWidth 
+if CurrentADC.PropValue("drawingWidth") = "1" then
+    drawingWidth = "small"
+ElseIf CurrentADC.PropValue("drawingWidth") = "2" then 
+    drawingWidth = "medium"
+ElseIf CurrentADC.PropValue("drawingWidth") = "4" then 
+    drawingWidth = "large"
+EndIf
+%}
+
+<div id="adc_{%= CurrentADC.InstanceId %}">
+    <script>
+    	var uploadConfig_{%=CurrentADC.InstanceID%} = {
+                authenticationUrl : '{%=CurrentADC.PropValue("AusUrl")%}' + "/Authenticate",
+                uploadUrl : '{%=CurrentADC.PropValue("AusUrl")%}' + "/Upload",
+                apiKey : '{%=CurrentADC.PropValue("AusApiKey")%}',
+                secretKey : '{%=CurrentADC.PropValue("AusSecretKey")%}',
+                maxfilesize : parseInt('{%=CurrentADC.PropValue("AusMaxFileSize")%}', 10),
+                ausProjectName : '{%=CurrentADC.PropValue("AusProjectName")%}',
+                shortcut : '{%=CurrentQuestion.Shortcut%}',
+                seedvalue : '{%=Interview.Seed%}',
+                guidstring : '{%=Interview.GUID%}',
+                ErrMsgColor : '{%=CurrentADC.PropValue("error_message_color")%}',
+                ErrMsgFileSizeExceeded : '{%=CurrentADC.PropValue("file_size_exceed_error")%}',
+                ErrMsgInvalidApiSecretKeys : '{%=CurrentADC.PropValue("invalid_api_secret_error")%}',
+                ErrMsgErrorAtUpload : '{%=CurrentADC.PropValue("error_occured_at_upload_error")%}',
+            	ErrMsgEmptyCanvas : '{%=CurrentADC.PropValue("error_empty_canvas")%}',
+                ErrMsgToken : '{%=CurrentADC.PropValue("error_while_generating_token")%}',
+                SuccessMsgColor : '{%=CurrentADC.PropValue("success_message_color")%}',
+                SuccessMsgUpload : '{%=CurrentADC.PropValue("success_message_upload")%}',
+            	drawingColor: '{%=CurrentADC.PropValue("drawingColor")%}',
+            	drawingWidth: '{%=CurrentADC.PropValue("drawingWidth")%}',
+            	enableCanvasBgColor: '{%=CurrentADC.PropValue("enableCanvasBgColor")%}',
+            	canvasBgColor: '{%=CurrentADC.PropValue("canvasBgColor")%}'
+        };
+        
+    	window.addEventListener("load", function() {
+          	var containerWidth = function() {
+                if (document.getElementsByClassName("askiaquestions")[0]) {
+                    return document.getElementsByClassName("askiaquestions")[0].clientWidth;
+                } else {
+                    return document.getElementsByTagName("form")[0].clientWidth;
+                }
+            }
+			var canvasWidth = {%=CurrentADC.PropValue("canvasWidth")%};
+			if (containerWidth()-100 <= canvasWidth) {
+                document.getElementById("sketchpad_"+{%=CurrentADC.InstanceId%}).setAttribute("width", containerWidth()-100);
+                {% if showToolbar and (Browser.Name <> "Internet Explorer") then %}
+                //document.getElementById("toolbar-elements_"+{%=CurrentADC.InstanceId%}).style.width = (containerWidth()-(100-{%=CurrentADC.PropValue("canvasBorderWidth")%}))+"px";
+                {%Endif%}
+            }          
+            
+            initCanvas({%=CurrentADC.InstanceId%});
+            
+            {% if showToolbar and (Browser.Name <> "Internet Explorer") then %}
+            const pickr = new Pickr({
+                el: "#colorPicker_{%=CurrentADC.InstanceId%}",
+                useAsButton: false,
+                default: "#000000",
+                position: "middle",
+                appendToBody: true,
+                components: {
+                	preview: true,
+                	hue: true,
+                	output: {
+                		save: true
+            		}
+            	},
+                strings: {
+       				save: 'Select'
+    			},
+                onSave(hsva) {
+                	var rgba = hsva.toRGBA();   
+                	uploadConfig_{%=CurrentADC.InstanceId%}.drawingColor = rgba[0]+","+rgba[1]+","+rgba[2];
+            	}
+            });
+        	{%Endif%}
+        }, false);
+        
+        window.addEventListener("resize", function() {
+          	var containerWidth = function() {
+                if (document.getElementsByClassName("askiaquestions")[0]) {
+                    return document.getElementsByClassName("askiaquestions")[0].clientWidth;
+                } else {
+                    return document.getElementsByTagName("form")[0].clientWidth;
+                }
+            }
+			var canvasWidth = {%=CurrentADC.PropValue("canvasWidth")%};
+			if (containerWidth()-100 <= canvasWidth) {
+                document.getElementById("sketchpad_"+{%=CurrentADC.InstanceId%}).setAttribute("width", containerWidth()-100);
+                {% if showToolbar and (Browser.Name <> "Internet Explorer") then %}
+                //document.getElementById("toolbar-elements_"+{%=CurrentADC.InstanceId%}).style.width = (containerWidth()-(100-{%=CurrentADC.PropValue("canvasBorderWidth")%}))+"px";
+                {%Endif%}
+            }                                       
+        }, false);     
+    </script>
+
+    
+    <div id="adc-errdiv_{%=CurrentADC.InstanceId%}">
+        <span id="spanErrorMessages_{%=CurrentADC.InstanceID%}"></span>
+    </div>
+    <div id="adc-succdiv_{%=CurrentADC.InstanceId%}">
+        <span id="spanSuccessMessage_{%=CurrentADC.InstanceID%}"></span>
+    </div>
+    
+    <span id="canvasMsg">{%=CurrentADC.PropValue("canvasMessage")%}</span>
+
+    {%if showToolbar and (Browser.Name <> "Internet Explorer") then%}
+        <ul id="toolbar-elements_{%=CurrentADC.InstanceId%}">
+            <li class="toolbar-element colorpicker">
+                  <div id="colorPicker_{%=CurrentADC.InstanceId%}"></div>
+            </li>
+            <li id="dropdown-size_{%=CurrentADC.InstanceId%}" class="toolbar-element dropdown"  onclick="showSize({%=CurrentADC.InstanceId%})">
+                <div class="dropbtn title">Size</div>
+                <div id="sizeList_{%=CurrentADC.InstanceId%}" class="dropdown-content">
+                    <span class="small {%if drawingWidth = "small" then%}selected{%endif%}" onclick="selectSize({%=CurrentADC.InstanceId%}, 'small');">Small</span>
+                    <span class="medium {%if drawingWidth = "medium" then%}selected{%endif%}" onclick="selectSize({%=CurrentADC.InstanceId%}, 'medium');">Medium</span>
+                    <span class="large {%if drawingWidth = "large" then%}selected{%endif%}" onclick="selectSize({%=CurrentADC.InstanceId%}, 'large');">Large</span>
+                </div>
+            </li>
+        </ul>
+    {%Endif%}
+    
+    <div id="canvasWrapper_{%=CurrentADC.InstanceId%}" class="empty">
+        <canvas id="sketchpad_{%=CurrentADC.InstanceId%}" width="{%=canvasWidth%}" height="{%=canvasHeight%}"></canvas>
+        <img id="sketchpadRes_{%=CurrentADC.InstanceId%}" src=""  {%if not(displayRes) then%}hidden{%EndIf%}/>
+    </div>
+    
+    <div class="uploadWrapper">
+        <input type="button" id="btnClear_{%=CurrentADC.InstanceId%}" class="btn" value="{%=CurrentADC.PropValue("ClearButtonText")%}" onclick="clearCanvas(canvas, ctx, {%=CurrentADC.InstanceId%});"/>
+		<input type="button" id="btnUpload_{%=CurrentADC.InstanceID%}" class="btn" value="{%=CurrentADC.PropValue("UploadButtonText")%}" onclick="uploadImage({%=CurrentADC.InstanceId%})"/>   
+    </div>
+    <input type="hidden" id="HidResult_{%=CurrentADC.InstanceID%}" name="{%= inputName %}" value="" {%:= attrMax %} {%:= attrRequired %}/>
+    <div id="overlay_loader_{%=CurrentADC.InstanceID%}" class="loading hidden">Loading&#8230;</div>
+
+</div>

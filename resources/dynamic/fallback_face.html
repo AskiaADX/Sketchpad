@@ -1,0 +1,76 @@
+{%
+Dim canvasWidth = CurrentADC.PropValue("canvasWidth")
+Dim canvasHeight = CurrentADC.PropValue("canvasHeight")
+
+Dim inputName  =  CurrentQuestion.InputName()
+
+Dim maxValue = CurrentQuestion.MaxValue
+Dim attrMax  = On(maxValue <> DK, "maxLength=\"" + maxValue + "\"", "")
+
+
+Dim attrRequired = On(CurrentQuestion.IsAllowDK, "required=\"required\"", "")
+
+Dim displayRes = (CurrentADC.PropValue("displayRes") = "1")
+
+%}
+<div id="adc_{%= CurrentADC.InstanceId %}">
+    <script> 
+        var uploadConfig_{%=CurrentADC.InstanceID%} = {              
+                ErrMsgColor : '{%=CurrentADC.PropValue("error_message_color")%}',
+                ErrMsgFileSizeExceeded : '{%=CurrentADC.PropValue("file_size_exceed_error")%}',
+                ErrMsgInvalidApiSecretKeys : '{%=CurrentADC.PropValue("invalid_api_secret_error")%}',
+                ErrMsgErrorAtUpload : '{%=CurrentADC.PropValue("error_occured_at_upload_error")%}',
+            	ErrMsgEmptyCanvas : '{%=CurrentADC.PropValue("error_empty_canvas")%}',
+                ErrMsgToken : '{%=CurrentADC.PropValue("error_while_generating_token")%}',
+                SuccessMsgColor : '{%=CurrentADC.PropValue("success_message_color")%}',
+                SuccessMsgUpload : '{%=CurrentADC.PropValue("success_message_upload")%}',
+                EnabledNextAfterUpload : '{%=CurrentADC.PropValue("nextAfterUpload")%}',
+                AutoSubmitAfterUpload : '{%=CurrentADC.PropValue("autoSubmitUpload")%}',
+            	drawingColor: '{%=CurrentADC.PropValue("drawingColor")%}',
+            	drawingWidth: '{%=CurrentADC.PropValue("drawingWidth")%}',
+            	enableCanvasBgColor: '{%=CurrentADC.PropValue("enableCanvasBgColor")%}',
+            	canvasBgColor: '{%=CurrentADC.PropValue("canvasBgColor")%}'
+        };
+        
+    	window.addEventListener("load", function() {
+          	var containerWidth = function() {
+                if (document.getElementsByClassName("askiaquestions")[0]) {
+                    return document.getElementsByClassName("askiaquestions")[0].clientWidth;
+                } else {
+                    return document.getElementsByTagName("form")[0].clientWidth;
+                }
+            }
+			var canvasWidth = {%=CurrentADC.PropValue("canvasWidth")%};
+			if (containerWidth()-100 <= canvasWidth) {
+                document.getElementById("sketchpad_"+{%=CurrentADC.InstanceId%}).setAttribute("width", containerWidth()-100);
+            }          
+            initCanvas({%=CurrentADC.InstanceId%});            
+        }, false);
+    </script>
+    
+    <div id="adc-errdiv_{%=CurrentADC.InstanceId%}">
+        <span id="spanErrorMessages_{%=CurrentADC.InstanceID%}"></span>
+    </div>
+    <div id="adc-succdiv_{%=CurrentADC.InstanceId%}">
+        <span id="spanSuccessMessage_{%=CurrentADC.InstanceID%}"></span>
+    </div>
+    <div id="canvasWrapper_{%=CurrentADC.InstanceId%}" class="empty">
+        <span id="canvasMsg">{%=CurrentADC.PropValue("canvasMessage")%}</span><br/>
+        <canvas id="sketchpad_{%=CurrentADC.InstanceId%}" width="{%=canvasWidth%}" height="{%=canvasHeight%}"></canvas>
+        <img id="sketchpadRes_{%=CurrentADC.InstanceId%}" src=""  {%if not(displayRes) then%}hidden{%EndIf%}/>
+    </div>
+    
+    <%
+       Byte[] dataPic = new Utils.imagefileToByteArray();
+       String extension = "jpg";
+       String imgParam;
+       String currentFolder = new WebViewFragment.getCurrentFolder();
+       QuestionnaireImport.storePicture(dataPic, imgParam , extension, currentFolder);
+    %>
+        
+    <div class="uploadWrapper">
+        <input type="button" id="btnClear_{%=CurrentADC.InstanceId%}" class="btn" value="{%=CurrentADC.PropValue("ClearButtonText")%}" onclick="clearCanvas(canvas, ctx, {%=CurrentADC.InstanceId%});"/>
+    </div>
+    <!-- <input type="hidden" id="HidResult_{%=CurrentADC.InstanceID%}" name="{%= inputName %}" value="" {%:= attrMax %} {%:= attrRequired %}/> -->
+
+</div>

@@ -1,0 +1,115 @@
+{%
+Dim canvasBorderWidth = CurrentADC.PropValue("canvasBorderWidth")
+Dim canvasBorderColor = CurrentADC.PropValue("canvasBorderColor")
+
+%}
+
+
+#adc_{%=CurrentADC.InstanceId%} {
+	text-align: center;    
+}
+
+#adc_{%=CurrentADC.InstanceId%} #canvasMsg {
+	margin-bottom: 20px;
+}
+
+/*
+#toolbar_{%=CurrentADC.InstanceId%} {
+    margin: auto;
+    display: inline;
+}
+*/
+
+#toolbar-elements_{%=CurrentADC.InstanceId%} {
+    width: 25%;
+    list-style-type: none;
+    margin: auto;
+    margin-top:10px;
+    margin-bottom: 10px;
+    padding: 0;
+    background-color: #b3b3b3;
+    overflow: hidden;
+    border-radius: 3px;
+}
+
+#toolbar-elements_{%=CurrentADC.InstanceId%}  .toolbar-element {
+	float: left;
+    padding-left: 5%;
+}
+
+.pickr {
+	padding-top: 25%;    
+}
+
+#toolbar-elements_{%=CurrentADC.InstanceId%}  .toolbar-element .title {
+    text-align: center;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;    
+}
+
+#toolbar-elements_{%=CurrentADC.InstanceId%}  .toolbar-element .title:hover {
+	background-color: #111;
+}
+
+#toolbar-elements_{%=CurrentADC.InstanceId%}  .dropbtn {
+    background-color: #333;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+}
+
+#toolbar-elements_{%=CurrentADC.InstanceId%} .toolbar-element .dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+#toolbar-elements_{%=CurrentADC.InstanceId%} .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+#toolbar-elements_{%=CurrentADC.InstanceId%} .dropdown-content span {
+    float: left;
+    color: black;
+    padding: 12px 16px;
+    display: block;
+}
+
+#toolbar-elements_{%=CurrentADC.InstanceId%} .dropdown-content span.selected {
+	background-color: #ddd;    
+}
+
+#toolbar-elements_{%=CurrentADC.InstanceId%} .dropdown-content span:hover {background-color: #ddd;}
+
+#toolbar-elements_{%=CurrentADC.InstanceId%} .dropdown:hover .dropbtn {background-color: #111;}
+
+#canvasWrapper_{%=CurrentADC.InstanceId%} {
+    margin: auto;
+}
+
+#sketchpad_{%=CurrentADC.InstanceId%} {
+    border: {%=canvasBorderWidth%}px solid rgb({%=canvasBorderColor%});
+    
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#sketchpadRes_{%=CurrentADC.InstanceId%} .full {
+    border: 2px solid black;
+}
+
+#btnUpload_{%=CurrentADC.InstanceID%} .uploadWrapper {    
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
